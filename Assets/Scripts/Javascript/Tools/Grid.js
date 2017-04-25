@@ -53,6 +53,7 @@ function Grid(_x, _y, _length, _cases)
 				ctx.fillStyle = '#d9d7d6';
 
 				if (this.Tiles[x][y] === 1) ctx.fillStyle = '#509cdb';
+				if (this.Tiles[x][y] === 2) ctx.fillStyle = '#000';
 
 				ctx.fillRect(x*this.caseLength, y*this.caseLength, this.caseLength, this.caseLength);
 			}
@@ -108,7 +109,8 @@ function Grid(_x, _y, _length, _cases)
 		}
 	}
 
-	this.CloneArray = function(Array) {
+	this.CloneArray = function(Array)
+	{
 		let NewArray = [];
 
 		for (let i in Array) {
@@ -119,12 +121,24 @@ function Grid(_x, _y, _length, _cases)
 		return NewArray;
 	}
 
-	this.ResetGrid = function(Array) {
+	this.ResetGrid = function(Array)
+	{
 		for (let x = 0; x < Array.length; x++)
 		{
 			for (let y = 0; y < Array[x].length; y++)
 			{
 				Array[x][y] = 0;
+			}
+		}
+	}
+
+	this.fillZone = function(startX, startY, endX, endY, id)
+	{
+		for (let x = startX; x < startX+endX; x++)
+		{
+			for (let y = startY; y < startY+endY; y++)
+			{
+				this.Tiles[x][y] = id;
 			}
 		}
 	}

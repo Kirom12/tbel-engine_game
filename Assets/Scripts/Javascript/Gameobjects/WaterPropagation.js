@@ -26,7 +26,7 @@
  *
  *
  * */
-function WaterPropagationObject() 
+function WaterPropagationObject(Grid, gridWidth, originX, originY, casesPropagation) 
 {
 	this.name = "WaterPropagation";
 	this.enabled = true;
@@ -46,6 +46,40 @@ function WaterPropagationObject()
 	this.Transform.Scale = new Vector(1,1);
 	this.Transform.Pivot = new Vector(0,0);
 	this.Transform.angle = 0;
+
+	this.PropagationTiles = [];
+	this.PropagationTilesNew = [];
+
+	this.Grid = Grid;
+	this.gridWidth = gridWidth;
+
+	this.originX = originX;
+	this.originY = originY;
+	this.casesPropagation = casesPropagation;
+
+	this.Propagation = function()
+	{
+		let caseType = 1;
+
+		for (let x = 0; x < this.PropagationTiles.length; x++)
+		{
+			for (let y = 0; y < this.PropagationTiles.length; y++)
+			{
+				if (this.PropagationTiles[x][y] === 1)
+				{
+					if (x-1 > -1 && this.Grid.TilesNew[x-1][y] != 2) this.Grid.TilesNew[x-1][y] = this.PropagationTilesNew[x-1][y] = 1;
+					if (x+1 < this.Grid.Tiles.length && this.Grid.TilesNew[x+1][y] != 2) this.Grid.TilesNew[x+1][y] = this.PropagationTilesNew[x+1][y] = 1;
+					if (y-1 > -1 && this.Grid.TilesNew[x][y-1] != 2) this.Grid.TilesNew[x][y-1] = this.PropagationTilesNew[x][y-1] = 1;
+					if (y+1 < this.Grid.Tiles.length && this.Grid.TilesNew[x][y+1] != 2) this.Grid.TilesNew[x][y+1] = this.PropagationTilesNew[x][y+1] = 1;
+					//console.log(this.PropagationTiles);
+				}
+			}
+		}
+
+		this.PropagationTiles = this.Grid.CloneArray(this.PropagationTilesNew);
+		this.Grid.ResetGrid(this.PropagationTilesNew);
+		this.Grid.Tiles = this.Grid.CloneArray(this.Grid.TilesNew);
+	}
 
 	/**
 	 * @function SetPosition
@@ -325,11 +359,23 @@ function WaterPropagationObject()
 	{
 		if (!this.started) {
 			// operation start
-
 			if (this.Physics.colliderIsSameSizeAsTransform) 
 			{
 				this.Physics.Collider = this.Transform;
 			}
+
+
+			for (let x = 0; x < this.gridWidth; x++)
+			{
+				this.PropagationTiles[x] = [];
+				this.PropagationTilesNew[x] = [];
+			}
+
+			this.PropagationTiles = this.Grid.CloneArray(this.Grid.Tiles);
+			this.Grid.ResetGrid(this.PropagationTiles); //BAD
+
+			this.PropagationTiles[this.originX][this.originY] = 1;
+
 
 			this.started = true;
 			Print('System:GameObject ' + this.name + " Started !");

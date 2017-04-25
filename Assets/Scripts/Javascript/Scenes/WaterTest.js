@@ -24,18 +24,18 @@ function WaterTestScene()
 
 	this.WorldSize = new Vector(4096,4096);
 
-	this.gridWidth = 25;
+	this.gridWidth = 100;
 	this.Grid = new Grid(0,0, canvas.width, this.gridWidth);
 
-	this.PropagationTiles = [];
-	this.PropagationTilesNew = [];
+	this.CreatePropagationZone = function()
+	{
 
-	this.casesPropagation = 5;
+	}
 
 	/**
 	 * Called at the instruction new Scene().
 	 * */
-	this.Awake = function() 
+	this.Awake = function()
 	{
 		console.clear();
 		Print('System:Scene ' + this.name + " Created !");
@@ -49,22 +49,17 @@ function WaterTestScene()
 	{
 		if (!this.started) 
 		{
+			// operation start
 			Time.SetTimeWhenSceneBegin();
 
 			this.Grid.SetToMultidimensionnalArray();
 
-			this.Grid.Tiles[12][10] = 1;
-
-			for (let x = 0; x < this.gridWidth; x++)
-			{
-				this.PropagationTiles[x] = [];
-				this.PropagationTilesNew[x] = [];
-			}
+			//Set obstacle
+			this.Grid.fillZone(50, 50, 5, 5, 2)
 
 			this.Grid.TilesNew = this.Grid.CloneArray(this.Grid.Tiles);
-			this.PropagationTiles = this.Grid.CloneArray(this.Grid.Tiles);
 
-			// operation start
+
 			this.started = true;
 			Print('System:Scene ' + this.name + " Started !");
 			Time.SetTimeWhenSceneLoaded();
@@ -77,8 +72,14 @@ function WaterTestScene()
 	 * */
 	this.Update = function() 
 	{
-		if (!Application.GamePaused) 
+		if (!Application.GamePaused)
 		{
+			if (Input.mouseClick) {
+				//console.log(Math.floor(Input.MousePosition.x/this.Grid.caseLength));
+				//console.log(Math.floor(Input.MousePosition.y/this.Grid.caseLength));
+				this.GameObjects.push(new WaterPropagationObject(this.Grid, this.gridWidth, Math.floor(Input.MousePosition.x/this.Grid.caseLength), Math.floor(Input.MousePosition.y/this.Grid.caseLength), 50));
+			}
+
 			for (var i = 0; i < this.GameObjects.length; i++) 
 			{
 				this.GameObjects[i].Start();
@@ -88,12 +89,18 @@ function WaterTestScene()
 				this.Groups[i].Start();
 			}
 
+
+
 			this.Grid.DrawMultidimensionnalArray();
 
 
-			if (this.casesPropagation > 0) {
-				this.GridPropagation();
-				this.casesPropagation--;
+			for (let i = 0; i < this.GameObjects.length; i++) 
+			{
+				if (this.GameObjects[i].casesPropagation > 0)
+				{
+					this.GameObjects[i].Propagation();
+					this.GameObjects[i].casesPropagation--;
+				}
 			}
 		}
 		if (Application.debugMode) 
@@ -118,25 +125,4 @@ function WaterTestScene()
 	}
 
 	this.Awake()
-
-	this.GridPropagation = function()
-	{
-		for (let x = 0; x < this.PropagationTiles.length; x++)
-		{
-			for (let y = 0; y < this.PropagationTiles.length; y++)
-			{
-				if (this.PropagationTiles[x][y] === 1)
-				{
-					if (x-1 > -1) this.Grid.TilesNew[x-1][y] = this.PropagationTilesNew[x-1][y] = 1;
-					if (x+1 < this.Grid.Tiles.length) this.Grid.TilesNew[x+1][y] = this.PropagationTilesNew[x+1][y] = 1;
-					if (y-1 > -1) this.Grid.TilesNew[x][y-1] = this.PropagationTilesNew[x][y-1] = 1;
-					if (y+1 < this.Grid.Tiles.length) this.Grid.TilesNew[x][y+1] = this.PropagationTilesNew[x][y+1] = 1;
-				}
-			}
-		}
-
-		this.PropagationTiles = this.Grid.CloneArray(this.PropagationTilesNew);
-		this.Grid.ResetGrid(this.PropagationTilesNew);
-		this.Grid.Tiles = this.Grid.CloneArray(this.Grid.TilesNew);
-	}
 }
