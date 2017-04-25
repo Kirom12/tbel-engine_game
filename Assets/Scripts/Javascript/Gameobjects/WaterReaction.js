@@ -26,9 +26,9 @@
  *
  *
  * */
-function WaterPropagationObject(Grid, gridWidth, originX, originY, casesPropagation) 
+function WaterReactionObject(GameGrid, gridX, gridY)
 {
-	this.name = "WaterPropagation";
+	this.name = "WaterReaction";
 	this.enabled = true;
 	this.started = false;
 	this.rendered = true;
@@ -47,73 +47,11 @@ function WaterPropagationObject(Grid, gridWidth, originX, originY, casesPropagat
 	this.Transform.Pivot = new Vector(0,0);
 	this.Transform.angle = 0;
 
-	this.PropagationTiles = [];
-	this.PropagationTilesNew = [];
+	this.Transform.GridCoord = new Vector(gridX, gridY);
 
-	this.Grid = Grid;
-	this.gridWidth = gridWidth;
+	this.Grid = GameGrid;
 
-	this.originX = originX;
-	this.originY = originY;
-	this.casesPropagation = casesPropagation;
-
-	this.checkArrayPropagation =
-	[
-		[-1, 0], [1, 0], [0, -1], [0, 1]
-	]
-
-	this.Propagation = function()
-	{
-		let caseType = 1;
-
-		for (let x = 0; x < this.PropagationTiles.length; x++)
-		{
-			for (let y = 0; y < this.PropagationTiles.length; y++)
-			{
-				if (this.PropagationTiles[x][y] === 1)
-				{
-					for (let i = 0; i < this.checkArrayPropagation.length; i++)
-					{
-
-						//console.log(this.Grid.Tiles.length);
-						
-						//World bounds
-						if (x+this.checkArrayPropagation[i][0] < 0 || x+this.checkArrayPropagation[i][0] > this.Grid.Tiles.length-1) continue;
-						if (y+this.checkArrayPropagation[i][1] < 0 || y+this.checkArrayPropagation[i][1] > this.Grid.Tiles.length-1) continue;
-						//Obstacle
-						switch(this.Grid.TilesNew[x+this.checkArrayPropagation[i][0]][y+this.checkArrayPropagation[i][1]])
-						{
-							case 2: //Obstacle
-								continue;
-								break;
-							case 3:
-								this.Grid.TilesNew[x+this.checkArrayPropagation[i][0]][y+this.checkArrayPropagation[i][1]] = 4;
-								//@TODO : know the right gameObject
-								continue;
-								break;
-							case 4:
-								continue;
-								break;
-							default:
-						}
-
-						this.Grid.TilesNew[x+this.checkArrayPropagation[i][0]][y+this.checkArrayPropagation[i][1]] = this.PropagationTilesNew[x+this.checkArrayPropagation[i][0]][y+this.checkArrayPropagation[i][1]] = 1;
-					}
-
-
-					// if (x-1 > -1 && this.Grid.TilesNew[x-1][y] != 2) this.Grid.TilesNew[x-1][y] = this.PropagationTilesNew[x-1][y] = 1;
-					// if (x+1 < this.Grid.Tiles.length && this.Grid.TilesNew[x+1][y] != 2) this.Grid.TilesNew[x+1][y] = this.PropagationTilesNew[x+1][y] = 1;
-					// if (y-1 > -1 && this.Grid.TilesNew[x][y-1] != 2) this.Grid.TilesNew[x][y-1] = this.PropagationTilesNew[x][y-1] = 1;
-					// if (y+1 < this.Grid.Tiles.length && this.Grid.TilesNew[x][y+1] != 2) this.Grid.TilesNew[x][y+1] = this.PropagationTilesNew[x][y+1] = 1;
-					//console.log(this.PropagationTiles);
-				}
-			}
-		}
-
-		this.PropagationTiles = this.Grid.CloneArray(this.PropagationTilesNew);
-		this.Grid.ResetGrid(this.PropagationTilesNew);
-		this.Grid.Tiles = this.Grid.CloneArray(this.Grid.TilesNew);
-	}
+	this.Grid.fillZone(gridX, gridY, 1, 1, 3);
 
 	/**
 	 * @function SetPosition
@@ -393,23 +331,11 @@ function WaterPropagationObject(Grid, gridWidth, originX, originY, casesPropagat
 	{
 		if (!this.started) {
 			// operation start
+
 			if (this.Physics.colliderIsSameSizeAsTransform) 
 			{
 				this.Physics.Collider = this.Transform;
 			}
-
-
-			for (let x = 0; x < this.gridWidth; x++)
-			{
-				this.PropagationTiles[x] = [];
-				this.PropagationTilesNew[x] = [];
-			}
-
-			this.PropagationTiles = this.Grid.CloneArray(this.Grid.Tiles);
-			this.Grid.ResetGrid(this.PropagationTiles); //BAD
-
-			this.PropagationTiles[this.originX][this.originY] = 1;
-
 
 			this.started = true;
 			Print('System:GameObject ' + this.name + " Started !");
@@ -471,6 +397,8 @@ function WaterPropagationObject(Grid, gridWidth, originX, originY, casesPropagat
 	 * */
 	this.Update = function() 
 	{
+
+
 		this.PostUpdate();	
 	};
 	/**

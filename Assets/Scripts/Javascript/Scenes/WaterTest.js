@@ -15,7 +15,10 @@
 function WaterTestScene() 
 {
 	this.name = "WaterTest";
-	this.GameObjects =[];
+	this.GameObjects = [];
+
+	this.WaterSources = [];
+
 	this.Groups = [];
 	this.Cameras = [];
 	this.CurrentCamera = null;
@@ -55,7 +58,15 @@ function WaterTestScene()
 			this.Grid.SetToMultidimensionnalArray();
 
 			//Set obstacle
-			this.Grid.fillZone(50, 50, 5, 5, 2)
+			this.Grid.fillZone(0, 0, 100, 5, 2);
+			this.Grid.fillZone(0, 50, 50, 2, 2);
+			this.Grid.fillZone(60, 6, 2, 50, 2);
+			this.Grid.fillZone(80, 5, 2, 20, 2);
+
+			this.GameObjects.push(new WaterReactionObject(this.Grid, 10, 10));
+			this.GameObjects.push(new WaterReactionObject(this.Grid, 20, 20));
+			this.GameObjects.push(new WaterReactionObject(this.Grid, 40, 12));
+			this.GameObjects.push(new WaterReactionObject(this.Grid, 23, 64));
 
 			this.Grid.TilesNew = this.Grid.CloneArray(this.Grid.Tiles);
 
@@ -77,9 +88,13 @@ function WaterTestScene()
 			if (Input.mouseClick) {
 				//console.log(Math.floor(Input.MousePosition.x/this.Grid.caseLength));
 				//console.log(Math.floor(Input.MousePosition.y/this.Grid.caseLength));
-				this.GameObjects.push(new WaterPropagationObject(this.Grid, this.gridWidth, Math.floor(Input.MousePosition.x/this.Grid.caseLength), Math.floor(Input.MousePosition.y/this.Grid.caseLength), 50));
+				this.WaterSources.push(new WaterPropagationObject(this.Grid, this.gridWidth, Math.floor(Input.MousePosition.x/this.Grid.caseLength), Math.floor(Input.MousePosition.y/this.Grid.caseLength), 200));
 			}
 
+			for (var i = 0; i < this.WaterSources.length; i++) 
+			{
+				this.WaterSources[i].Start();
+			}
 			for (var i = 0; i < this.GameObjects.length; i++) 
 			{
 				this.GameObjects[i].Start();
@@ -94,12 +109,12 @@ function WaterTestScene()
 			this.Grid.DrawMultidimensionnalArray();
 
 
-			for (let i = 0; i < this.GameObjects.length; i++) 
+			for (let i = 0; i < this.WaterSources.length; i++) 
 			{
-				if (this.GameObjects[i].casesPropagation > 0)
+				if (this.WaterSources[i].casesPropagation > 0)
 				{
-					this.GameObjects[i].Propagation();
-					this.GameObjects[i].casesPropagation--;
+					this.WaterSources[i].Propagation();
+					this.WaterSources[i].casesPropagation--;
 				}
 			}
 		}

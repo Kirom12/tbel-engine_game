@@ -54,6 +54,8 @@ function Grid(_x, _y, _length, _cases)
 
 				if (this.Tiles[x][y] === 1) ctx.fillStyle = '#509cdb';
 				if (this.Tiles[x][y] === 2) ctx.fillStyle = '#000';
+				if (this.Tiles[x][y] === 3) ctx.fillStyle = '#8c4112';
+				if (this.Tiles[x][y] === 4) ctx.fillStyle = '#3a8f30';
 
 				ctx.fillRect(x*this.caseLength, y*this.caseLength, this.caseLength, this.caseLength);
 			}
