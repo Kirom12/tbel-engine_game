@@ -43,6 +43,7 @@ function Loader()
 			Scenes["Collision"] = new CollisionScene();
 			Scenes["Dialogue"] = new DialogueScene();
 			Scenes["Save"] = new SaveScene();
+			Scenes["WaterTest"] = new WaterTestScene();
 
 			//Application.LoadedScene = Scenes["Animation"];
 			// operation start

@@ -15,7 +15,9 @@ function Grid(_x, _y, _length, _cases)
 	this.length = _length;
 	this.cases = _cases;
 	this.caseLength = this.length / this.cases
-	this.Tiles = new Array(this.cases * this.cases).fill(0);
+	this.Tiles = [];
+	this.TilesNew = [];
+
 	this.BestPath = null;
 
 /**
@@ -38,7 +40,36 @@ function Grid(_x, _y, _length, _cases)
 					ctx.fillStyle = '#000000';
 					ctx.fillRect(this.x + i * this.caseLength, this.y + j * this.caseLength, this.caseLength, this.caseLength);
 				}
-			}	
+			}
+		}
+	}
+
+	this.DrawMultidimensionnalArray = function() 
+	{
+		for (let x = 0; x < this.cases; x++)
+		{
+			for (let y = 0; y < this.cases; y++)
+			{
+				ctx.fillStyle = '#d9d7d6';
+
+				if (this.Tiles[x][y] === 1) ctx.fillStyle = '#509cdb';
+
+				ctx.fillRect(x*this.caseLength, y*this.caseLength, this.caseLength, this.caseLength);
+			}
+		}
+	}
+
+	this.SetToMultidimensionnalArray = function() {
+		for (let x = 0; x < this.cases; x++)
+		{
+			
+			this.Tiles[x] = [];
+			this.TilesNew[x] = [];
+
+			for (let y = 0; y < this.cases; y++)
+			{
+				this.Tiles[x][y] = 0;
+			}
 		}
 	}
 
@@ -73,6 +104,27 @@ function Grid(_x, _y, _length, _cases)
 					ctx.fillStyle = 'rgba(51,255,255,0.33)';
 					ctx.fillRect(this.x + vector.x * this.caseLength, this.y + vector.y * this.caseLength, this.caseLength, this.caseLength);
 				}	
+			}
+		}
+	}
+
+	this.CloneArray = function(Array) {
+		let NewArray = [];
+
+		for (let i in Array) {
+			NewArray[i] = [];
+			NewArray[i] = Array[i].slice();
+		}
+
+		return NewArray;
+	}
+
+	this.ResetGrid = function(Array) {
+		for (let x = 0; x < Array.length; x++)
+		{
+			for (let y = 0; y < Array[x].length; y++)
+			{
+				Array[x][y] = 0;
 			}
 		}
 	}
