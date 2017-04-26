@@ -20,6 +20,12 @@ function Grid(_x, _y, _length, _cases)
 
 	this.BestPath = null;
 
+	this.tilesCorrection =
+	{
+		y: -36,
+		width: 70
+	};
+
 /**
 *
 * Draw the grid
@@ -44,25 +50,86 @@ function Grid(_x, _y, _length, _cases)
 		}
 	}
 
-	this.DrawMultidimensionnalArray = function() 
+	this.DrawMultidimensionnalArray = function(grid = false) 
 	{
+		let tileImage = [null, null];
+
 		for (let x = 0; x < this.cases; x++)
 		{
 			for (let y = 0; y < this.cases; y++)
 			{
 				ctx.fillStyle = '#d9d7d6';
 
-				if (this.Tiles[x][y] === 1) ctx.fillStyle = '#509cdb';
-				if (this.Tiles[x][y] === 2) ctx.fillStyle = '#000';
-				if (this.Tiles[x][y] === 3) ctx.fillStyle = '#8c4112';
-				if (this.Tiles[x][y] === 4) ctx.fillStyle = '#3a8f30';
+				if (grid) {
+					ctx.strokeStyle="#66645e";
+					ctx.strokeRect(x*this.caseLength, y*this.caseLength, this.caseLength, this.caseLength);
+				}
 
-				ctx.fillRect(x*this.caseLength, y*this.caseLength, this.caseLength, this.caseLength);
+				switch (this.Tiles[x][y])
+				{
+					case 0:
+						continue;
+						break;
+					case 1: //Water
+						tileImage[0] = Images['water-block'];
+						break;
+					case 2: //Stone
+						tileImage[0] = Images['stone-block'];
+						break;
+					case 3:
+						tileImage[0] = Images['brown-block'];
+						break;
+					case 4:
+						tileImage[0] = Images['grass-block'];
+						tileImage[1] = Images['tree-tall'];
+						break;
+					case 5:
+						tileImage[0] = Images['wood-block'];
+						tileImage[1] = Images['character-girl'];
+						break;
+					case 6:
+						continue;
+						break;
+					case 7:
+						tileImage[0] = Images['wood-block'];
+						tileImage[1] = Images['character-boy'];
+						break;
+					case 8:
+						tileImage[0] = Images['water-block'];
+						tileImage[1] = Images['character-boy'];
+						break;
+					case 10:
+						tileImage[0] = Images['wall-block'];
+						break;
+					default:
+
+				}
+
+				if (tileImage[0]) {
+					ctx.drawImage(tileImage[0],
+								x*this.caseLength,
+								y*this.caseLength+this.tilesCorrection.y,
+								this.caseLength,
+								this.caseLength+this.tilesCorrection.width);
+					tileImage[0] = null;
+
+					if (tileImage[1]) {
+						ctx.drawImage(tileImage[1],
+							x*this.caseLength,
+							y*this.caseLength+this.tilesCorrection.y-25,
+							this.caseLength,
+							this.caseLength+this.tilesCorrection.width);
+						tileImage[1] = 0;
+					}
+				} else {
+					ctx.fillRect(x*this.caseLength, y*this.caseLength, this.caseLength, this.caseLength);
+				}
 			}
 		}
 	}
 
-	this.SetToMultidimensionnalArray = function() {
+	this.SetToMultidimensionnalArray = function()
+	{
 		for (let x = 0; x < this.cases; x++)
 		{
 			
@@ -134,15 +201,21 @@ function Grid(_x, _y, _length, _cases)
 		}
 	}
 
-	this.fillZone = function(startX, startY, endX, endY, id)
+	this.FillZone = function(startX, startY, endX, endY, id)
 	{
 		for (let x = startX; x < startX+endX; x++)
 		{
 			for (let y = startY; y < startY+endY; y++)
 			{
 				this.Tiles[x][y] = id;
+				this.TilesNew[x][y] = id;
 			}
 		}
+	}
+
+	this.GetCellType = function(x, y)
+	{
+		return this.Tiles[x][y];
 	}
 }
 

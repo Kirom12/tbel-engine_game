@@ -26,9 +26,9 @@
  *
  *
  * */
-function WaterPropagationObject(Scene, Grid, gridWidth, SceneGameObjects, originX, originY, casesPropagation) 
+function TreeObject(GameGrid, gridX, gridY)
 {
-	this.name = "WaterPropagation";
+	this.name = "Tree";
 	this.enabled = true;
 	this.started = false;
 	this.rendered = true;
@@ -47,115 +47,16 @@ function WaterPropagationObject(Scene, Grid, gridWidth, SceneGameObjects, origin
 	this.Transform.Pivot = new Vector(0,0);
 	this.Transform.angle = 0;
 
-	this.PropagationTiles = [];
-	this.PropagationTilesNew = [];
+	this.Transform.GridCoord = new Vector(gridX, gridY);
 
-	this.Grid = Grid;
-	this.gridWidth = gridWidth;
+	this.Grid = GameGrid;
+	this.Grid.FillZone(gridX, gridY, 1, 1, 3);
 
-	this.originX = originX;
-	this.originY = originY;
-	this.casesPropagation = casesPropagation || 0;
+	this.activatedByWater = false;
 
-	this.checkArrayPropagation =
-	[
-		[-1, 0], [1, 0], [0, -1], [0, 1]
-	]
-
-	this.Scene = Scene;
-	this.SceneGameObjects = SceneGameObjects;
-
-	this.refreshTime = 500;
-	this.Time = Time.Time;
-
-	this.Propagation = function()
+	this.ReactToWater = function()
 	{
-		let caseType = 1;
-		let gameObject;
-
-		for (let x = 0; x < this.PropagationTiles.length; x++)
-		{
-			for (let y = 0; y < this.PropagationTiles.length; y++)
-			{
-				if (this.PropagationTiles[x][y] === 1)
-				{
-					for (let i = 0; i < this.checkArrayPropagation.length; i++)
-					{
-
-						//console.log(this.Grid.Tiles.length);
-						
-						//World bounds
-						if (x+this.checkArrayPropagation[i][0] < 0 || x+this.checkArrayPropagation[i][0] > this.Grid.Tiles.length-1) continue;
-						if (y+this.checkArrayPropagation[i][1] < 0 || y+this.checkArrayPropagation[i][1] > this.Grid.Tiles.length-1) continue;
-						//Obstacle
-						switch(this.Grid.TilesNew[x+this.checkArrayPropagation[i][0]][y+this.checkArrayPropagation[i][1]])
-						{
-							case 2: //Obstacle
-								continue;
-								break;
-							case 3:
-								this.Grid.TilesNew[x+this.checkArrayPropagation[i][0]][y+this.checkArrayPropagation[i][1]] = 4;
-								gameObject = this.FindGameObject(x+this.checkArrayPropagation[i][0], y+this.checkArrayPropagation[i][1]);
-								gameObject.ReactToWater();
-
-								this.Scene.CountActivated.treeObjects++;
-								continue;
-								break;
-							case 4:
-								continue;
-								break;
-							case 5:
-								this.Grid.TilesNew[x+this.checkArrayPropagation[i][0]][y+this.checkArrayPropagation[i][1]] = 6;
-								this.Scene.GameOver();
-								continue;
-								break;
-							case 6:
-								continue;
-								break;
-							case 7:
-								this.Grid.TilesNew[x+this.checkArrayPropagation[i][0]][y+this.checkArrayPropagation[i][1]] = 8;
-								gameObject = this.FindGameObject(x+this.checkArrayPropagation[i][0], y+this.checkArrayPropagation[i][1]);
-								gameObject.ReactToWater();
-
-								this.Scene.CountActivated.pirateObjects++;
-								continue;
-								break;
-							case 8:
-								continue;
-								break;
-							case 10:
-								continue;
-								break;
-							default:
-						}
-
-						this.Grid.TilesNew[x+this.checkArrayPropagation[i][0]][y+this.checkArrayPropagation[i][1]] = this.PropagationTilesNew[x+this.checkArrayPropagation[i][0]][y+this.checkArrayPropagation[i][1]] = caseType;
-					}
-
-
-					// if (x-1 > -1 && this.Grid.TilesNew[x-1][y] != 2) this.Grid.TilesNew[x-1][y] = this.PropagationTilesNew[x-1][y] = 1;
-					// if (x+1 < this.Grid.Tiles.length && this.Grid.TilesNew[x+1][y] != 2) this.Grid.TilesNew[x+1][y] = this.PropagationTilesNew[x+1][y] = 1;
-					// if (y-1 > -1 && this.Grid.TilesNew[x][y-1] != 2) this.Grid.TilesNew[x][y-1] = this.PropagationTilesNew[x][y-1] = 1;
-					// if (y+1 < this.Grid.Tiles.length && this.Grid.TilesNew[x][y+1] != 2) this.Grid.TilesNew[x][y+1] = this.PropagationTilesNew[x][y+1] = 1;
-					//console.log(this.PropagationTiles);
-				}
-			}
-		}
-
-		this.PropagationTiles = this.Grid.CloneArray(this.PropagationTilesNew);
-		this.Grid.ResetGrid(this.PropagationTilesNew);
-		this.Grid.Tiles = this.Grid.CloneArray(this.Grid.TilesNew);
-	}
-
-	this.FindGameObject = function(x, y)
-	{
-		for (let i in this.SceneGameObjects)
-		{
-			if (this.SceneGameObjects[i].Transform.GridCoord.x === x && this.SceneGameObjects[i].Transform.GridCoord.y === y)
-			{
-				return this.SceneGameObjects[i];
-			}
-		}
+		this.activatedByWater = true;
 	}
 
 	/**
@@ -436,23 +337,11 @@ function WaterPropagationObject(Scene, Grid, gridWidth, SceneGameObjects, origin
 	{
 		if (!this.started) {
 			// operation start
+
 			if (this.Physics.colliderIsSameSizeAsTransform) 
 			{
 				this.Physics.Collider = this.Transform;
 			}
-
-
-			for (let x = 0; x < this.gridWidth; x++)
-			{
-				this.PropagationTiles[x] = [];
-				this.PropagationTilesNew[x] = [];
-			}
-
-			this.PropagationTiles = this.Grid.CloneArray(this.Grid.Tiles);
-			this.Grid.ResetGrid(this.PropagationTiles); //BAD
-
-			this.PropagationTiles[this.originX][this.originY] = 1;
-
 
 			this.started = true;
 			Print('System:GameObject ' + this.name + " Started !");
@@ -514,6 +403,8 @@ function WaterPropagationObject(Scene, Grid, gridWidth, SceneGameObjects, origin
 	 * */
 	this.Update = function() 
 	{
+
+
 		this.PostUpdate();	
 	};
 	/**

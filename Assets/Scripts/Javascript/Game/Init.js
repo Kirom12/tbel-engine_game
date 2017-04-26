@@ -93,7 +93,7 @@ function ImageLoaded(_imageLoaded)
 		Application.LoadedScene = Scenes["SceneName"];
 	*/
 
-	Application.LoadedScene = Scenes["WaterTest"];
+	Application.LoadedScene = Scenes["WaterMapEditor"];
 }
 /**
  * 

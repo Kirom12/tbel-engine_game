@@ -51,6 +51,7 @@ var Debug =
 
 	ShowFPS : function()
 	{
+		ctx.font = '10px Arial';
 		ctx.fillStyle = "rgba(122,122,122, 0.4)";
 		ctx.RoundedBox(4, 4, 120, 70, 20);
 	

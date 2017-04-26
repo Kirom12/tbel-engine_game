@@ -44,6 +44,8 @@ function Loader()
 			Scenes["Dialogue"] = new DialogueScene();
 			Scenes["Save"] = new SaveScene();
 			Scenes["WaterTest"] = new WaterTestScene();
+			Scenes["GameOver"] = new GameOverScene();
+			Scenes["WaterMapEditor"] = new WaterMapEditorScene();
 
 			//Application.LoadedScene = Scenes["Animation"];
 			// operation start

@@ -30,6 +30,16 @@ var WalkableTiles = [];
 var ImagesPath = 
 [
 	{name: "character", path: "PlanetCute/Character Boy.png"},
-	{name: "character-sp", path: "Spritesheet/character-small.png"}
+	{name: "character-sp", path: "Spritesheet/character-small.png"},
+	{name: "water-block", path: "PlanetCute/Water Block.png"},
+	{name: "brown-block", path: "PlanetCute/Brown Block.png"},
+	{name: "grass-block", path: "PlanetCute/Grass Block.png"},
+	{name: "stone-block", path: "PlanetCute/Stone Block.png"},
+	{name: "tree-tall", path: "PlanetCute/Tree Tall.png"},
+	{name: "wood-block", path: "PlanetCute/Wood Block.png"},
+	{name: "wall-block", path: "PlanetCute/Wall Block.png"},
+	{name: "character-girl", path: "PlanetCute/Character Pink Girl.png"},
+	{name: "character-boy", path: "PlanetCute/Character Boy.png"},
+	{name: "wrong-cross", path: "PlanetCute/Wrong Cross.png"}
 ];
 var Images = {};

@@ -26,9 +26,9 @@
  *
  *
  * */
-function WaterReactionObject(GameGrid, gridX, gridY)
+function VillagerObject(GameGrid, gridX, gridY)
 {
-	this.name = "WaterReaction";
+	this.name = "Villager";
 	this.enabled = true;
 	this.started = false;
 	this.rendered = true;
@@ -50,8 +50,14 @@ function WaterReactionObject(GameGrid, gridX, gridY)
 	this.Transform.GridCoord = new Vector(gridX, gridY);
 
 	this.Grid = GameGrid;
+	this.Grid.FillZone(gridX, gridY, 1, 1, 5);
 
-	this.Grid.fillZone(gridX, gridY, 1, 1, 3);
+	this.activatedByWater = false;
+
+	this.ReactToWater = function()
+	{
+		this.activatedByWater = true;
+	}
 
 	/**
 	 * @function SetPosition
