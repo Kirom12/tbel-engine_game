@@ -38,6 +38,14 @@ function WaterMapEditorScene()
 		height: 170
 	}
 
+	this.Buttons =
+	{
+		play: new Button("Jouer", "Arial", 12),
+		save: new Button("Sauvegarder", "Arial", 12)
+	}
+
+	this.Input; this.BodyElement;
+
 	/**
 	 * Called at the instruction new Scene().
 	 * */
@@ -62,7 +70,7 @@ function WaterMapEditorScene()
 
 			this.Grid.FillZone(0, 0, this.gridWidth, this.gridWidth, 2);
 
-			this.Grid.Tiles = JSON.parse(LocalStorage.Load("Map"));
+			this.Grid.Tiles = JSON.parse(LocalStorage.Load(Application.currentMap));
 
 			//Set tiles buttons
 			this.tileSprites =
@@ -85,6 +93,20 @@ function WaterMapEditorScene()
 
 			this.tileSprites[6].Position = new Vector(900+40, 6*this.tilesData.height/1.5+30);
 			this.tileSprites[6].Size = new Vector(this.tilesData.width/1.5, this.tilesData.width/1.5);
+
+			//Set input
+			this.Input = document.createElement("input");
+			this.BodyElement = document.getElementsByTagName("body");
+
+			this.Input.setAttribute("type", "text");
+			this.Input.setAttribute("id", "save_input");
+
+			this.Input.style.left = "920px";
+			this.Input.style.top = "820px";
+
+			this.Input.value = Application.currentMap;
+
+			this.BodyElement[0].appendChild(this.Input);
 
 			this.started = true;
 			Print('System:Scene ' + this.name + " Started !");
@@ -166,6 +188,9 @@ function WaterMapEditorScene()
 			ctx.strokeStyle="#ad2826";
 			ctx.strokeRect(this.tileSprites[this.selectedPositionArray].Position.x, this.tileSprites[this.selectedPositionArray].Position.y, this.tileSprites[this.selectedPositionArray].Size.x, this.tileSprites[this.selectedPositionArray].Size.y);
 
+			this.Buttons['save'].Render(920, 880);
+			this.Buttons['play'].Render(920, 920);
+
 			if (Input.mouseClick)
 			{		
 				//Check if a tile is clicked
@@ -177,16 +202,18 @@ function WaterMapEditorScene()
 					}
 				}
 
-				if (Physics.PointBoxCollision(Input.MousePosition, new Box(920, 880, 120, 30)))
+				if (Physics.PointBoxCollision(Input.MousePosition, this.Buttons['save'].Box))
 				{
 					console.log("save");
-					LocalStorage.Save("Map", JSON.stringify(this.Grid.Tiles));
+					LocalStorage.Save(this.Input.value, JSON.stringify(this.Grid.Tiles));
+				}
+
+				if (Physics.PointBoxCollision(Input.MousePosition, this.Buttons['play'].Box))
+				{
+					this.BodyElement[0].removeChild(this.Input);
+					Application.LoadedScene = Scenes["StartScene"];
 				}
 			}
-
-			ctx.font = '20px Arial';
-			ctx.fillStyle = "#000";
-			ctx.fillText("Sauvegarder", 920, 900);
 		} 
 		else 
 		{

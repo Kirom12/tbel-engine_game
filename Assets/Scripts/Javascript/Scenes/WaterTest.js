@@ -39,11 +39,77 @@ function WaterTestScene()
 		treeObjects: 0
 	}
 
+	this.Buttons =
+	{
+		editor: new Button("Editeur", "Arial", 12)
+	}
+
 	this.GameOver = function()
 	{
 		Print('Game Over !');
 
 		Application.LoadedScene = Scenes["GameOver"];
+	}
+
+	this.GenerateRandomMap = function()
+	{
+		this.Grid.FillZone(0, 0, this.gridWidth, this.gridWidth, 2);
+
+		for (let i = 0; i < 20; i++)
+		{
+			this.Grid.FillZone(Math.floor(Math.random()*this.gridWidth), Math.floor(Math.random()*this.gridWidth), 1, 1, 10);
+		}
+
+		for (let i = 0; i < 20; i++)
+		{
+			switch(Math.floor(Math.random()*3))
+			{
+				case 0:
+					this.GameObjects.push(new TreeObject(this.Grid, Math.floor(Math.random()*this.gridWidth), Math.floor(Math.random()*this.gridWidth)));
+					break;
+				case 1:
+					this.GameObjects.push(new VillagerObject(this.Grid, Math.floor(Math.random()*this.gridWidth), Math.floor(Math.random()*this.gridWidth)));
+					break;
+				case 2:
+					this.GameObjects.push(new PirateObject(this.Grid, Math.floor(Math.random()*this.gridWidth), Math.floor(Math.random()*this.gridWidth)));
+					break;
+			}
+		}
+
+
+		let startX = Math.floor(Math.random()*this.gridWidth);
+		let startY = Math.floor(Math.random()*this.gridWidth);
+
+		this.Grid.FillZone(startX, startY, 2, 1, 0);
+		this.WaterSources.push(new WaterPropagationObject(this, this.Grid, this.gridWidth, this.GameObjects, startX, startY));
+	}
+
+	this.GetSavedMap = function()
+	{
+		this.Grid.Tiles = JSON.parse(LocalStorage.Load(Application.currentMap));
+
+		for (let x = 0; x < this.Grid.Tiles.length; x++)
+		{
+			for (let y = 0; y < this.Grid.Tiles[x].length; y++)
+			{
+				switch (this.Grid.Tiles[x][y])
+				{
+					case 1:
+						this.WaterSources.push(new WaterPropagationObject(this, this.Grid, this.gridWidth, this.GameObjects, x, y));
+						break;
+					case 3:
+						this.GameObjects.push(new TreeObject(this.Grid, x, y));
+						break;
+					case 5:
+						this.GameObjects.push(new VillagerObject(this.Grid, x, y));
+						break;
+					case 7:
+						this.GameObjects.push(new PirateObject(this.Grid, x, y));
+						break;
+					default:
+				}
+			}
+		}
 	}
 
 	/**
@@ -68,37 +134,12 @@ function WaterTestScene()
 
 			this.Grid.SetToMultidimensionnalArray();
 
-			//Set obstacle
 
-			this.Grid.FillZone(0, 0, this.gridWidth, this.gridWidth, 2);
-
-			for (let i = 0; i < 20; i++)
-			{
-				this.Grid.FillZone(Math.floor(Math.random()*this.gridWidth), Math.floor(Math.random()*this.gridWidth), 1, 1, 10);
-			}
-
-			for (let i = 0; i < 20; i++)
-			{
-				switch(Math.floor(Math.random()*3))
-				{
-					case 0:
-						this.GameObjects.push(new TreeObject(this.Grid, Math.floor(Math.random()*this.gridWidth), Math.floor(Math.random()*this.gridWidth)));
-						break;
-					case 1:
-						this.GameObjects.push(new VillagerObject(this.Grid, Math.floor(Math.random()*this.gridWidth), Math.floor(Math.random()*this.gridWidth)));
-						break;
-					case 2:
-						this.GameObjects.push(new PirateObject(this.Grid, Math.floor(Math.random()*this.gridWidth), Math.floor(Math.random()*this.gridWidth)));
-						break;
-				}
-			}
-
-
-			let startX = Math.floor(Math.random()*this.gridWidth);
-			let startY = Math.floor(Math.random()*this.gridWidth);
-
-			this.Grid.FillZone(startX, startY, 2, 1, 0);
-			this.WaterSources.push(new WaterPropagationObject(this, this.Grid, this.gridWidth, this.GameObjects, startX, startY));
+			/*
+			this.GenerateRandomMap();
+			/*/
+			this.GetSavedMap();
+			//*/
 
 			this.Grid.TilesNew = this.Grid.CloneArray(this.Grid.Tiles);
 
@@ -181,6 +222,16 @@ function WaterTestScene()
 			ctx.fillStyle = "orange";
 			ctx.fillText("Pirates : " + this.CountActivated.pirateObjects, 920, 80);
 			ctx.fillText("Arbres : " + this.CountActivated.treeObjects, 920, 120);
+
+			this.Buttons['editor'].Render(920, 880);
+
+			if (Input.mouseClick)
+			{
+				if (Physics.PointBoxCollision(Input.MousePosition, this.Buttons['editor'].Box))
+				{
+					Application.LoadedScene = Scenes["WaterMapEditor"];
+				}
+			}
 		} 
 		else 
 		{

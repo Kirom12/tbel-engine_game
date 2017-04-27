@@ -21,7 +21,8 @@ var Application =
 {
 	LoadedScene: null,
 	gamePaused: false,
-	debugMode: true
+	debugMode: true,
+	currentMap: null
 };
 
 var imagesLoaded = 0;
