@@ -40,8 +40,7 @@ function WaterMapEditorScene()
 
 	this.Buttons =
 	{
-		play: new Button("Jouer", "Arial", 12),
-		save: new Button("Sauvegarder", "Arial", 12)
+		save: new Button("Sauvegarder", "Arial")
 	}
 
 	this.Input; this.BodyElement;
@@ -189,7 +188,6 @@ function WaterMapEditorScene()
 			ctx.strokeRect(this.tileSprites[this.selectedPositionArray].Position.x, this.tileSprites[this.selectedPositionArray].Position.y, this.tileSprites[this.selectedPositionArray].Size.x, this.tileSprites[this.selectedPositionArray].Size.y);
 
 			this.Buttons['save'].Render(920, 880);
-			this.Buttons['play'].Render(920, 920);
 
 			if (Input.mouseClick)
 			{		
@@ -206,12 +204,6 @@ function WaterMapEditorScene()
 				{
 					console.log("save");
 					LocalStorage.Save(this.Input.value, JSON.stringify(this.Grid.Tiles));
-				}
-
-				if (Physics.PointBoxCollision(Input.MousePosition, this.Buttons['play'].Box))
-				{
-					this.BodyElement[0].removeChild(this.Input);
-					Application.LoadedScene = Scenes["StartScene"];
 				}
 			}
 		} 

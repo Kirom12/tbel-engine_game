@@ -55,7 +55,7 @@ function StartScreenScene()
 
 			for (let i in this.Maps)
 			{
-				this.Buttons["Map" + i] = new Button(this.Maps[i].name, "Arial", 12);
+				this.Buttons["Map" + i] = new Button(this.Maps[i].name, "Arial");
 			}
 
 			console.log(this.Maps);
@@ -84,6 +84,11 @@ function StartScreenScene()
 			{
 				this.Groups[i].Start();
 			}
+
+			if (this.Maps.length === 0) {
+				Application.currentMap = "Random";
+				Application.LoadedScene = Scenes["WaterTest"];
+			}
 		}
 		if (Application.debugMode) 
 		{
@@ -99,11 +104,12 @@ function StartScreenScene()
 		if (!Application.GamePaused) 
 		{
 			//Show UI
+
 			j = 0;
 
 			for (let i in this.Buttons)
 			{
-				this.Buttons[i].Render(canvas.width/2, (j+1)*50);
+				this.Buttons[i].Render(canvas.width/2-20, (j+1)*50);
 				
 				if (Input.mouseClick)
 				{

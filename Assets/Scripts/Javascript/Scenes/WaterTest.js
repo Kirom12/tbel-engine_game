@@ -41,7 +41,7 @@ function WaterTestScene()
 
 	this.Buttons =
 	{
-		editor: new Button("Editeur", "Arial", 12)
+		editor: new Button("Editeur", "Arial")
 	}
 
 	this.GameOver = function()
@@ -82,6 +82,8 @@ function WaterTestScene()
 
 		this.Grid.FillZone(startX, startY, 2, 1, 0);
 		this.WaterSources.push(new WaterPropagationObject(this, this.Grid, this.gridWidth, this.GameObjects, startX, startY));
+
+		LocalStorage.Save("Random", JSON.stringify(this.Grid.Tiles));
 	}
 
 	this.GetSavedMap = function()
@@ -135,11 +137,11 @@ function WaterTestScene()
 			this.Grid.SetToMultidimensionnalArray();
 
 
-			/*
-			this.GenerateRandomMap();
-			/*/
-			this.GetSavedMap();
-			//*/
+			if (Application.currentMap == "Random") {
+				this.GenerateRandomMap();
+			} else {
+				this.GetSavedMap();	
+			}
 
 			this.Grid.TilesNew = this.Grid.CloneArray(this.Grid.Tiles);
 
